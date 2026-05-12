@@ -7,6 +7,9 @@
 
     <title>Opción 4 - Sistema 3x3</title>
 
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <!-- Python en navegador -->
     <script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js"></script>
 
@@ -188,6 +191,28 @@
             text-align:center;
         }
 
+        .grafica{
+
+            margin-top:30px;
+
+            text-align:center;
+
+            font-size:24px;
+
+            font-weight:bold;
+        }
+
+        canvas{
+
+            background:white;
+
+            margin-top:20px;
+
+            border-radius:15px;
+
+            padding:10px;
+        }
+
         .volver{
 
             text-align:center;
@@ -308,6 +333,16 @@
 
     </div>
 
+    <!-- GRAFICA -->
+
+    <div class="grafica">
+
+        Gráfica de Resultados
+
+    </div>
+
+    <canvas id="graficaResultados"></canvas>
+
     <!-- VOLVER -->
 
     <div class="volver">
@@ -327,6 +362,8 @@
 <script>
 
     let pyodide;
+
+    let chart;
 
     async function iniciarPython(){
 
@@ -398,13 +435,77 @@ except:
 resultado
         `;
 
-        let resultadoPython = await pyodide.runPythonAsync(codigoPython);
+        let resultadoPython =
+        await pyodide.runPythonAsync(codigoPython);
 
         document.getElementById("resultado").innerHTML = `
             Resultado:
             <br><br>
             ${resultadoPython}
         `;
+
+        crearGrafica(resultadoPython);
+    }
+
+    function crearGrafica(texto){
+
+        let numeros = texto.match(/-?\\d+\\.?\\d*/g);
+
+        if(!numeros || numeros.length < 3){
+
+            return;
+        }
+
+        let x = parseFloat(numeros[0]);
+
+        let y = parseFloat(numeros[1]);
+
+        let z = parseFloat(numeros[2]);
+
+        const ctx =
+        document.getElementById("graficaResultados")
+        .getContext("2d");
+
+        if(chart){
+
+            chart.destroy();
+        }
+
+        chart = new Chart(ctx, {
+
+            type:'bar',
+
+            data:{
+
+                labels:['X','Y','Z'],
+
+                datasets:[{
+
+                    label:'Valores obtenidos',
+
+                    data:[x,y,z],
+
+                    borderWidth:2
+
+                }]
+            },
+
+            options:{
+
+                responsive:true,
+
+                plugins:{
+
+                    title:{
+
+                        display:true,
+
+                        text:'Resultados del Sistema 3x3'
+
+                    }
+                }
+            }
+        });
     }
 
     function limpiar(){
@@ -419,6 +520,11 @@ resultado
 
         document.getElementById("resultado").innerHTML =
         "Aquí aparecerá el resultado.";
+
+        if(chart){
+
+            chart.destroy();
+        }
     }
 
 </script>
