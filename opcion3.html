@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Opción 3 - Sistema 2x2</title>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Python en navegador -->
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js"></script>
+
+    <style>
+
+        body{
+
+            margin:0;
+            padding:0;
+
+            font-family: Arial, sans-serif;
+
+            background: #20199e;
+
+            background: linear-gradient(
+                90deg,
+                rgba(32, 25, 158, 1) 18%,
+                rgba(9, 9, 121, 1) 38%,
+                rgba(6, 12, 13, 1) 89%
+            );
+
+            min-height:100vh;
+
+            display:flex;
+            justify-content:center;
+            align-items:center;
+
+            color:white;
+        }
+
+        .container{
+
+            width:90%;
+            max-width:1000px;
+
+            background: rgba(255,255,255,0.08);
+
+            padding:30px;
+
+            border-radius:20px;
+
+            box-shadow:0px 0px 25px rgba(0,0,0,0.4);
+        }
+
+        .titulo{
+
+            background: rgba(255,255,255,0.1);
+
+            padding:20px;
+
+            border-radius:20px;
+
+            text-align:center;
+
+            margin-bottom:25px;
+        }
+
+        .text-gradient{
+
+            --_space: ;
+
+            background-image: linear-gradient(
+                45deg var(--_space),
+                #c11ceb,
+                #36c7d1 50%,
+                #25007a 100%
+            );
+
+            background-clip:text;
+
+            color:transparent;
+
+            -webkit-background-clip:text;
+            -webkit-text-fill-color:transparent;
+        }
+
+        h1{
+
+            margin:0;
+
+            font-size:45px;
+        }
+
+        .descripcion{
+
+            margin-top:20px;
+
+            background: rgba(255,255,255,0.08);
+
+            padding:20px;
+
+            border-radius:15px;
+
+            line-height:1.7;
+
+            font-size:18px;
+        }
+
+        .inputs{
+
+            margin-top:30px;
+
+            text-align:center;
+        }
+
+        input{
+
+            padding:12px;
+
+            margin:10px;
+
+            border:none;
+
+            border-radius:10px;
+
+            width:100px;
+
+            font-size:16px;
+        }
+
+        button{
+
+            background-image: linear-gradient(
+                to right,
+                #FF512F 0%,
+                #F09819 51%,
+                #FF512F 100%
+            );
+
+            margin:10px;
+
+            padding:15px 45px;
+
+            text-align:center;
+
+            text-transform:uppercase;
+
+            transition:0.5s;
+
+            background-size:200% auto;
+
+            color:white;
+
+            box-shadow:0 0 20px rgba(0,0,0,0.4);
+
+            border-radius:10px;
+
+            border:none;
+
+            cursor:pointer;
+
+            font-size:15px;
+        }
+
+        button:hover{
+
+            background-position:right center;
+
+            transform:scale(1.05);
+        }
+
+        .resultado{
+
+            margin-top:25px;
+
+            background: rgba(255,255,255,0.08);
+
+            padding:20px;
+
+            border-radius:15px;
+
+            font-size:20px;
+
+            text-align:center;
+        }
+
+        .grafica{
+
+            margin-top:30px;
+
+            text-align:center;
+
+            font-size:24px;
+
+            font-weight:bold;
+        }
+
+        canvas{
+
+            background:white;
+
+            margin-top:20px;
+
+            border-radius:15px;
+
+            padding:10px;
+        }
+
+        .ecuacion{
+
+            margin-top:20px;
+
+            font-size:18px;
+
+            text-align:center;
+        }
+
+        a{
+            text-decoration:none;
+        }
+
+        .volver{
+
+            text-align:center;
+
+            margin-top:30px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- TITULO -->
+
+    <div class="titulo">
+
+        <h1 class="text-gradient">
+            Sistema de Ecuaciones 2x2
+        </h1>
+
+    </div>
+
+    <!-- DESCRIPCION -->
+
+    <div class="descripcion">
+
+        Un sistema de ecuaciones 2x2 permite encontrar el valor de dos incógnitas
+        utilizando dos ecuaciones lineales.
+
+        <br><br>
+
+        Forma general:
+
+        <br><br>
+
+        <b>a₁x + b₁y = c₁</b>
+
+        <br>
+
+        <b>a₂x + b₂y = c₂</b>
+
+        <br><br>
+
+        El punto donde las rectas se intersectan representa la solución del sistema.
+
+    </div>
+
+    <!-- INPUTS -->
+
+    <div class="inputs">
+
+        <div class="ecuacion">
+
+            Ecuación 1
+
+            <br>
+
+            <input type="number" id="a1" placeholder="a1">
+
+            <input type="number" id="b1" placeholder="b1">
+
+            <input type="number" id="c1" placeholder="c1">
+
+        </div>
+
+        <div class="ecuacion">
+
+            Ecuación 2
+
+            <br>
+
+            <input type="number" id="a2" placeholder="a2">
+
+            <input type="number" id="b2" placeholder="b2">
+
+            <input type="number" id="c2" placeholder="c2">
+
+        </div>
+
+        <br>
+
+        <button onclick="resolver()">
+            Resolver
+        </button>
+
+        <button onclick="limpiar()">
+            Limpiar
+        </button>
+
+    </div>
+
+    <!-- RESULTADO -->
+
+    <div id="resultado" class="resultado">
+
+        Aquí aparecerá el resultado.
+
+    </div>
+
+    <!-- GRAFICA -->
+
+    <div class="grafica">
+
+        Gráfica
+
+    </div>
+
+    <canvas id="grafica"></canvas>
+
+    <!-- VOLVER -->
+
+    <div class="volver">
+
+        <a href="index.html">
+
+            <button>
+                Volver al Menú
+            </button>
+
+        </a>
+
+    </div>
+
+</div>
+
+<script>
+
+    let chart;
+
+    let pyodide;
+
+    async function iniciarPython(){
+
+        pyodide = await loadPyodide();
+
+    }
+
+    iniciarPython();
+
+    function generarX(){
+
+        let valores = [];
+
+        for(let i=-10; i<=10; i+=0.5){
+
+            valores.push(i);
+
+        }
+
+        return valores;
+    }
+
+    async function resolver(){
+
+        let a1 = parseFloat(document.getElementById("a1").value);
+
+        let b1 = parseFloat(document.getElementById("b1").value);
+
+        let c1 = parseFloat(document.getElementById("c1").value);
+
+        let a2 = parseFloat(document.getElementById("a2").value);
+
+        let b2 = parseFloat(document.getElementById("b2").value);
+
+        let c2 = parseFloat(document.getElementById("c2").value);
+
+        if(
+            isNaN(a1) || isNaN(b1) || isNaN(c1) ||
+            isNaN(a2) || isNaN(b2) || isNaN(c2)
+        ){
+
+            alert("Ingresa valores válidos");
+
+            return;
+        }
+
+        /* ===== PYTHON ===== */
+
+        let codigoPython = `
+a1 = ${a1}
+b1 = ${b1}
+c1 = ${c1}
+
+a2 = ${a2}
+b2 = ${b2}
+c2 = ${c2}
+
+det = (a1*b2) - (a2*b1)
+
+if det == 0:
+    resultado = "No existe una solución única"
+else:
+    x = round(((c1*b2) - (c2*b1)) / det, 2)
+    y = round(((a1*c2) - (a2*c1)) / det, 2)
+
+    resultado = f"x = {x}, y = {y}"
+
+resultado
+        `;
+
+        let resultadoPython = await pyodide.runPythonAsync(codigoPython);
+
+        document.getElementById("resultado").innerHTML = `
+            Resultado:
+            <br><br>
+            ${resultadoPython}
+        `;
+
+        let xValores = generarX();
+
+        let yValores1 = xValores.map(x => (c1 - a1*x)/b1);
+
+        let yValores2 = xValores.map(x => (c2 - a2*x)/b2);
+
+        crearGrafica(xValores, yValores1, yValores2);
+    }
+
+    function crearGrafica(xValores, y1, y2){
+
+        const ctx = document.getElementById("grafica").getContext("2d");
+
+        if(chart){
+
+            chart.destroy();
+        }
+
+        chart = new Chart(ctx, {
+
+            type:"line",
+
+            data:{
+
+                labels:xValores,
+
+                datasets:[
+
+                    {
+
+                        label:"Recta 1",
+
+                        data:y1,
+
+                        borderWidth:3,
+
+                        fill:false
+
+                    },
+
+                    {
+
+                        label:"Recta 2",
+
+                        data:y2,
+
+                        borderWidth:3,
+
+                        fill:false
+
+                    }
+
+                ]
+            },
+
+            options:{
+
+                responsive:true,
+
+                plugins:{
+
+                    title:{
+
+                        display:true,
+
+                        text:"Sistema de Ecuaciones"
+
+                    }
+                }
+            }
+        });
+    }
+
+    function limpiar(){
+
+        document.getElementById("a1").value = "";
+
+        document.getElementById("b1").value = "";
+
+        document.getElementById("c1").value = "";
+
+        document.getElementById("a2").value = "";
+
+        document.getElementById("b2").value = "";
+
+        document.getElementById("c2").value = "";
+
+        document.getElementById("resultado").innerHTML =
+        "Aquí aparecerá el resultado.";
+
+        if(chart){
+
+            chart.destroy();
+        }
+    }
+
+</script>
+
+</body>
+</html>
