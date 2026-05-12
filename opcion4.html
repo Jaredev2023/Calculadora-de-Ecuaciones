@@ -2,229 +2,192 @@
 <html lang="es">
 <head>
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Opción 4 - Sistema 3x3</title>
+<title>Opción 4 - Sistema 3x3</title>
 
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- CHART -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- Python en navegador -->
-    <script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js"></script>
+<!-- PYTHON -->
+<script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js"></script>
 
-    <style>
+<style>
 
-        body{
+body{
 
-            margin:0;
-            padding:0;
+    margin:0;
+    padding:0;
 
-            font-family: Arial, sans-serif;
+    font-family:Arial, sans-serif;
 
-            background: #20199e;
+    background: linear-gradient(
+        90deg,
+        rgba(32,25,158,1) 18%,
+        rgba(9,9,121,1) 38%,
+        rgba(6,12,13,1) 89%
+    );
 
-            background: linear-gradient(
-                90deg,
-                rgba(32, 25, 158, 1) 18%,
-                rgba(9, 9, 121, 1) 38%,
-                rgba(6, 12, 13, 1) 89%
-            );
+    color:white;
 
-            min-height:100vh;
+    min-height:100vh;
 
-            display:flex;
-            justify-content:center;
-            align-items:center;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
 
-            color:white;
-        }
+.container{
 
-        .container{
+    width:90%;
+    max-width:1000px;
 
-            width:90%;
-            max-width:1100px;
+    background:rgba(255,255,255,0.08);
 
-            background: rgba(255,255,255,0.08);
+    padding:30px;
 
-            padding:30px;
+    border-radius:20px;
 
-            border-radius:20px;
+    box-shadow:0px 0px 20px rgba(0,0,0,0.4);
+}
 
-            box-shadow:0px 0px 25px rgba(0,0,0,0.4);
-        }
+h1{
 
-        .titulo{
+    text-align:center;
 
-            background: rgba(255,255,255,0.1);
+    font-size:45px;
 
-            padding:20px;
+    background: linear-gradient(
+        45deg,
+        #c11ceb,
+        #36c7d1,
+        #25007a
+    );
 
-            border-radius:20px;
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
 
-            text-align:center;
+.descripcion{
 
-            margin-bottom:25px;
-        }
+    background:rgba(255,255,255,0.08);
 
-        .text-gradient{
+    padding:20px;
 
-            --_space: ;
+    border-radius:15px;
 
-            background-image: linear-gradient(
-                45deg var(--_space),
-                #c11ceb,
-                #36c7d1 50%,
-                #25007a 100%
-            );
+    margin-top:20px;
 
-            background-clip:text;
+    line-height:1.7;
+}
 
-            color:transparent;
+.inputs{
 
-            -webkit-background-clip:text;
-            -webkit-text-fill-color:transparent;
-        }
+    text-align:center;
 
-        h1{
+    margin-top:30px;
+}
 
-            margin:0;
+input{
 
-            font-size:45px;
-        }
+    padding:12px;
 
-        .descripcion{
+    margin:8px;
 
-            margin-top:20px;
+    border:none;
 
-            background: rgba(255,255,255,0.08);
+    border-radius:10px;
 
-            padding:20px;
+    width:80px;
 
-            border-radius:15px;
+    font-size:16px;
+}
 
-            line-height:1.7;
+button{
 
-            font-size:18px;
-        }
+    background-image: linear-gradient(
+        to right,
+        #FF512F 0%,
+        #F09819 51%,
+        #FF512F 100%
+    );
 
-        .inputs{
+    margin:10px;
 
-            margin-top:30px;
+    padding:15px 35px;
 
-            text-align:center;
-        }
+    color:white;
 
-        input{
+    border:none;
 
-            padding:12px;
+    border-radius:10px;
 
-            margin:8px;
+    cursor:pointer;
 
-            border:none;
+    font-size:15px;
 
-            border-radius:10px;
+    background-size:200% auto;
 
-            width:90px;
+    transition:0.5s;
+}
 
-            font-size:16px;
-        }
+button:hover{
 
-        .fila{
+    background-position:right center;
 
-            margin-top:20px;
-        }
+    transform:scale(1.05);
+}
 
-        button{
+.resultado{
 
-            background-image: linear-gradient(
-                to right,
-                #FF512F 0%,
-                #F09819 51%,
-                #FF512F 100%
-            );
+    margin-top:25px;
 
-            margin:10px;
+    background:rgba(255,255,255,0.08);
 
-            padding:15px 45px;
+    padding:20px;
 
-            text-align:center;
+    border-radius:15px;
 
-            text-transform:uppercase;
+    text-align:center;
 
-            transition:0.5s;
+    font-size:20px;
+}
 
-            background-size:200% auto;
+.grafica-titulo{
 
-            color:white;
+    text-align:center;
 
-            box-shadow:0 0 20px rgba(0,0,0,0.4);
+    margin-top:30px;
 
-            border-radius:10px;
+    font-size:24px;
 
-            border:none;
+    font-weight:bold;
+}
 
-            cursor:pointer;
+canvas{
 
-            font-size:15px;
-        }
+    background:white;
 
-        button:hover{
+    margin-top:20px;
 
-            background-position:right center;
+    border-radius:15px;
 
-            transform:scale(1.05);
-        }
+    padding:10px;
+}
 
-        .resultado{
+.volver{
 
-            margin-top:25px;
+    text-align:center;
 
-            background: rgba(255,255,255,0.08);
+    margin-top:30px;
+}
 
-            padding:20px;
+a{
+    text-decoration:none;
+}
 
-            border-radius:15px;
-
-            font-size:20px;
-
-            text-align:center;
-        }
-
-        .grafica{
-
-            margin-top:30px;
-
-            text-align:center;
-
-            font-size:24px;
-
-            font-weight:bold;
-        }
-
-        canvas{
-
-            background:white;
-
-            margin-top:20px;
-
-            border-radius:15px;
-
-            padding:10px;
-        }
-
-        .volver{
-
-            text-align:center;
-
-            margin-top:30px;
-        }
-
-        a{
-            text-decoration:none;
-        }
-
-    </style>
+</style>
 
 </head>
 
@@ -232,22 +195,14 @@
 
 <div class="container">
 
-    <!-- TITULO -->
-
-    <div class="titulo">
-
-        <h1 class="text-gradient">
-            Sistema de Ecuaciones 3x3
-        </h1>
-
-    </div>
-
-    <!-- DESCRIPCION -->
+    <h1>
+        Sistema de Ecuaciones 3x3
+    </h1>
 
     <div class="descripcion">
 
-        Un sistema de ecuaciones 3x3 permite encontrar el valor de
-        tres incógnitas utilizando tres ecuaciones lineales.
+        Esta calculadora permite resolver sistemas de ecuaciones
+        lineales de 3x3 utilizando Python.
 
         <br><br>
 
@@ -255,15 +210,15 @@
 
         <br><br>
 
-        <b>a₁x + b₁y + c₁z = d₁</b>
+        a₁x + b₁y + c₁z = d₁
 
         <br>
 
-        <b>a₂x + b₂y + c₂z = d₂</b>
+        a₂x + b₂y + c₂z = d₂
 
         <br>
 
-        <b>a₃x + b₃y + c₃z = d₃</b>
+        a₃x + b₃y + c₃z = d₃
 
     </div>
 
@@ -271,44 +226,35 @@
 
     <div class="inputs">
 
-        <!-- FILA 1 -->
+        <!-- ECUACION 1 -->
 
-        <div class="fila">
+        <div>
 
             <input type="number" id="a1" placeholder="a1">
-
             <input type="number" id="b1" placeholder="b1">
-
             <input type="number" id="c1" placeholder="c1">
-
             <input type="number" id="d1" placeholder="d1">
 
         </div>
 
-        <!-- FILA 2 -->
+        <!-- ECUACION 2 -->
 
-        <div class="fila">
+        <div>
 
             <input type="number" id="a2" placeholder="a2">
-
             <input type="number" id="b2" placeholder="b2">
-
             <input type="number" id="c2" placeholder="c2">
-
             <input type="number" id="d2" placeholder="d2">
 
         </div>
 
-        <!-- FILA 3 -->
+        <!-- ECUACION 3 -->
 
-        <div class="fila">
+        <div>
 
             <input type="number" id="a3" placeholder="a3">
-
             <input type="number" id="b3" placeholder="b3">
-
             <input type="number" id="c3" placeholder="c3">
-
             <input type="number" id="d3" placeholder="d3">
 
         </div>
@@ -329,19 +275,21 @@
 
     <div id="resultado" class="resultado">
 
-        Aquí aparecerá el resultado.
+        Aquí aparecerá el resultado
+
+    </div>
+
+    <!-- TITULO GRAFICA -->
+
+    <div class="grafica-titulo">
+
+        Gráfica
 
     </div>
 
     <!-- GRAFICA -->
 
-    <div class="grafica">
-
-        Gráfica de Resultados
-
-    </div>
-
-    <canvas id="graficaResultados"></canvas>
+    <canvas id="grafica"></canvas>
 
     <!-- VOLVER -->
 
@@ -361,171 +309,181 @@
 
 <script>
 
-    let pyodide;
+let pyodide;
+let chart;
 
-    let chart;
+/* ===== INICIAR PYTHON ===== */
 
-    async function iniciarPython(){
+async function iniciarPython(){
 
-        pyodide = await loadPyodide();
+    pyodide = await loadPyodide();
 
+    await pyodide.loadPackage("numpy");
+}
+
+window.onload = async () => {
+
+    await iniciarPython();
+
+};
+
+/* ===== RESOLVER ===== */
+
+async function resolver(){
+
+    let valores = [];
+
+    document.querySelectorAll("input").forEach(input => {
+
+        valores.push(parseFloat(input.value));
+
+    });
+
+    if(valores.includes(NaN)){
+
+        alert("Completa todos los campos");
+
+        return;
     }
 
-    iniciarPython();
+    let [
+        a1,b1,c1,d1,
+        a2,b2,c2,d2,
+        a3,b3,c3,d3
+    ] = valores;
 
-    async function resolver(){
-
-        let a1 = parseFloat(document.getElementById("a1").value);
-        let b1 = parseFloat(document.getElementById("b1").value);
-        let c1 = parseFloat(document.getElementById("c1").value);
-        let d1 = parseFloat(document.getElementById("d1").value);
-
-        let a2 = parseFloat(document.getElementById("a2").value);
-        let b2 = parseFloat(document.getElementById("b2").value);
-        let c2 = parseFloat(document.getElementById("c2").value);
-        let d2 = parseFloat(document.getElementById("d2").value);
-
-        let a3 = parseFloat(document.getElementById("a3").value);
-        let b3 = parseFloat(document.getElementById("b3").value);
-        let c3 = parseFloat(document.getElementById("c3").value);
-        let d3 = parseFloat(document.getElementById("d3").value);
-
-        if(
-            isNaN(a1) || isNaN(b1) || isNaN(c1) || isNaN(d1) ||
-            isNaN(a2) || isNaN(b2) || isNaN(c2) || isNaN(d2) ||
-            isNaN(a3) || isNaN(b3) || isNaN(c3) || isNaN(d3)
-        ){
-
-            alert("Ingresa valores válidos");
-
-            return;
-        }
-
-        /* ===== PYTHON ===== */
-
-        let codigoPython = `
+    let codigo = `
 import numpy as np
 
 A = np.array([
-    [${a1}, ${b1}, ${c1}],
-    [${a2}, ${b2}, ${c2}],
-    [${a3}, ${b3}, ${c3}]
+[${a1},${b1},${c1}],
+[${a2},${b2},${c2}],
+[${a3},${b3},${c3}]
 ])
 
 B = np.array([
-    ${d1},
-    ${d2},
-    ${d3}
+${d1},
+${d2},
+${d3}
 ])
 
-try:
+sol = np.linalg.solve(A,B)
 
-    solucion = np.linalg.solve(A, B)
+x = round(sol[0],2)
+y = round(sol[1],2)
+z = round(sol[2],2)
 
-    x = round(solucion[0], 2)
-    y = round(solucion[1], 2)
-    z = round(solucion[2], 2)
+f"{x},{y},{z}"
+`;
 
-    resultado = f"x = {x}, y = {y}, z = {z}"
-
-except:
-
-    resultado = "El sistema no tiene solución única"
-
-resultado
-        `;
+    try{
 
         let resultadoPython =
-        await pyodide.runPythonAsync(codigoPython);
+        await pyodide.runPythonAsync(codigo);
+
+        let datos = resultadoPython.split(",");
+
+        let x = parseFloat(datos[0]);
+        let y = parseFloat(datos[1]);
+        let z = parseFloat(datos[2]);
 
         document.getElementById("resultado").innerHTML = `
             Resultado:
             <br><br>
-            ${resultadoPython}
+            x = ${x}
+            <br>
+            y = ${y}
+            <br>
+            z = ${z}
         `;
 
-        crearGrafica(resultadoPython);
-    }
+        crearGrafica(x,y,z);
 
-    function crearGrafica(texto){
-
-        let numeros = texto.match(/-?\\d+\\.?\\d*/g);
-
-        if(!numeros || numeros.length < 3){
-
-            return;
-        }
-
-        let x = parseFloat(numeros[0]);
-
-        let y = parseFloat(numeros[1]);
-
-        let z = parseFloat(numeros[2]);
-
-        const ctx =
-        document.getElementById("graficaResultados")
-        .getContext("2d");
-
-        if(chart){
-
-            chart.destroy();
-        }
-
-        chart = new Chart(ctx, {
-
-            type:'bar',
-
-            data:{
-
-                labels:['X','Y','Z'],
-
-                datasets:[{
-
-                    label:'Valores obtenidos',
-
-                    data:[x,y,z],
-
-                    borderWidth:2
-
-                }]
-            },
-
-            options:{
-
-                responsive:true,
-
-                plugins:{
-
-                    title:{
-
-                        display:true,
-
-                        text:'Resultados del Sistema 3x3'
-
-                    }
-                }
-            }
-        });
-    }
-
-    function limpiar(){
-
-        let inputs = document.querySelectorAll("input");
-
-        inputs.forEach(input => {
-
-            input.value = "";
-
-        });
+    }catch(error){
 
         document.getElementById("resultado").innerHTML =
-        "Aquí aparecerá el resultado.";
-
-        if(chart){
-
-            chart.destroy();
-        }
+        "El sistema no tiene solución única";
     }
+}
+
+/* ===== GRAFICA ===== */
+
+function crearGrafica(x,y,z){
+
+    const ctx =
+    document.getElementById("grafica")
+    .getContext("2d");
+
+    if(chart){
+
+        chart.destroy();
+    }
+
+    chart = new Chart(ctx, {
+
+        type:'line',
+
+        data:{
+
+            labels:['X','Y','Z'],
+
+            datasets:[{
+
+                label:'Resultados',
+
+                data:[x,y,z],
+
+                borderWidth:3,
+
+                fill:false,
+
+                tension:0
+            }]
+        },
+
+        options:{
+
+            responsive:true,
+
+            plugins:{
+
+                title:{
+
+                    display:true,
+
+                    text:'Gráfica de Resultados'
+                }
+            },
+
+            scales:{
+
+                y:{
+
+                    beginAtZero:true
+                }
+            }
+        }
+    });
+}
+
+/* ===== LIMPIAR ===== */
+
+function limpiar(){
+
+    document.querySelectorAll("input").forEach(input => {
+
+        input.value = "";
+
+    });
+
+    document.getElementById("resultado").innerHTML =
+    "Aquí aparecerá el resultado";
+
+    if(chart){
+
+        chart.destroy();
+    }
+}
 
 </script>
 
