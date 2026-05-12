@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Opción 2 - Segundo Grado</title>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Python en navegador -->
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js"></script>
+
+    <style>
+
+        body{
+
+            margin:0;
+            padding:0;
+
+            font-family: Arial, sans-serif;
+
+            background: #20199e;
+
+            background: linear-gradient(
+                90deg,
+                rgba(32, 25, 158, 1) 18%,
+                rgba(9, 9, 121, 1) 38%,
+                rgba(6, 12, 13, 1) 89%
+            );
+
+            min-height:100vh;
+
+            display:flex;
+            justify-content:center;
+            align-items:center;
+
+            color:white;
+        }
+
+        .container{
+
+            width:90%;
+            max-width:950px;
+
+            background: rgba(255,255,255,0.08);
+
+            padding:30px;
+
+            border-radius:20px;
+
+            box-shadow:0px 0px 25px rgba(0,0,0,0.4);
+        }
+
+        .titulo{
+
+            background: rgba(255,255,255,0.1);
+
+            padding:20px;
+
+            border-radius:20px;
+
+            text-align:center;
+
+            margin-bottom:25px;
+        }
+
+        .text-gradient{
+
+            --_space: ;
+
+            background-image: linear-gradient(
+                45deg var(--_space),
+                #c11ceb,
+                #36c7d1 50%,
+                #25007a 100%
+            );
+
+            background-clip:text;
+
+            color:transparent;
+
+            -webkit-background-clip:text;
+            -webkit-text-fill-color:transparent;
+        }
+
+        h1{
+
+            margin:0;
+
+            font-size:45px;
+        }
+
+        .descripcion{
+
+            margin-top:20px;
+
+            background: rgba(255,255,255,0.08);
+
+            padding:20px;
+
+            border-radius:15px;
+
+            line-height:1.7;
+
+            font-size:18px;
+        }
+
+        .inputs{
+
+            margin-top:30px;
+
+            text-align:center;
+        }
+
+        input{
+
+            padding:12px;
+
+            margin:10px;
+
+            border:none;
+
+            border-radius:10px;
+
+            width:120px;
+
+            font-size:16px;
+        }
+
+        button{
+
+            background-image: linear-gradient(
+                to right,
+                #FF512F 0%,
+                #F09819 51%,
+                #FF512F 100%
+            );
+
+            margin:10px;
+
+            padding:15px 45px;
+
+            text-align:center;
+
+            text-transform:uppercase;
+
+            transition:0.5s;
+
+            background-size:200% auto;
+
+            color:white;
+
+            box-shadow:0 0 20px rgba(0,0,0,0.4);
+
+            border-radius:10px;
+
+            border:none;
+
+            cursor:pointer;
+
+            font-size:15px;
+        }
+
+        button:hover{
+
+            background-position:right center;
+
+            transform:scale(1.05);
+        }
+
+        .resultado{
+
+            margin-top:25px;
+
+            background: rgba(255,255,255,0.08);
+
+            padding:20px;
+
+            border-radius:15px;
+
+            font-size:20px;
+
+            text-align:center;
+        }
+
+        .grafica{
+
+            margin-top:30px;
+
+            text-align:center;
+
+            font-size:24px;
+
+            font-weight:bold;
+        }
+
+        canvas{
+
+            background:white;
+
+            margin-top:20px;
+
+            border-radius:15px;
+
+            padding:10px;
+        }
+
+        a{
+            text-decoration:none;
+        }
+
+        .volver{
+
+            text-align:center;
+
+            margin-top:30px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- TITULO -->
+
+    <div class="titulo">
+
+        <h1 class="text-gradient">
+            Ecuaciones de Segundo Grado
+        </h1>
+
+    </div>
+
+    <!-- DESCRIPCION -->
+
+    <div class="descripcion">
+
+        Una ecuación de segundo grado genera una parábola.
+
+        <br><br>
+
+        Su forma general es:
+
+        <br><br>
+
+        <b>ax² + bx + c = 0</b>
+
+        <br><br>
+
+        Donde:
+
+        <br>
+
+        • <b>a</b> determina la apertura de la parábola.
+
+        <br>
+
+        • <b>b</b> afecta la inclinación.
+
+        <br>
+
+        • <b>c</b> representa el punto donde la gráfica cruza el eje Y.
+
+    </div>
+
+    <!-- INPUTS -->
+
+    <div class="inputs">
+
+        <input type="number" id="a" placeholder="Valor de a">
+
+        <input type="number" id="b" placeholder="Valor de b">
+
+        <input type="number" id="c" placeholder="Valor de c">
+
+        <br>
+
+        <button onclick="resolver()">
+            Resolver
+        </button>
+
+        <button onclick="limpiar()">
+            Limpiar
+        </button>
+
+    </div>
+
+    <!-- RESULTADO -->
+
+    <div id="resultado" class="resultado">
+
+        Aquí aparecerá el resultado.
+
+    </div>
+
+    <!-- GRAFICA -->
+
+    <div class="grafica">
+
+        Gráfica
+
+    </div>
+
+    <canvas id="grafica"></canvas>
+
+    <!-- VOLVER -->
+
+    <div class="volver">
+
+        <a href="index.html">
+
+            <button>
+                Volver al Menú
+            </button>
+
+        </a>
+
+    </div>
+
+</div>
+
+<script>
+
+    let chart;
+
+    let pyodide;
+
+    async function iniciarPython(){
+
+        pyodide = await loadPyodide();
+
+    }
+
+    iniciarPython();
+
+    function generarX(){
+
+        let valores = [];
+
+        for(let i=-10; i<=10; i+=0.5){
+
+            valores.push(i);
+
+        }
+
+        return valores;
+    }
+
+    async function resolver(){
+
+        let a = parseFloat(document.getElementById("a").value);
+
+        let b = parseFloat(document.getElementById("b").value);
+
+        let c = parseFloat(document.getElementById("c").value);
+
+        if(isNaN(a) || isNaN(b) || isNaN(c)){
+
+            alert("Ingresa valores válidos");
+
+            return;
+        }
+
+        /* ===== PYTHON ===== */
+
+        let codigoPython = `
+import math
+
+a = ${a}
+b = ${b}
+c = ${c}
+
+discriminante = b**2 - 4*a*c
+
+if discriminante >= 0:
+    x1 = round(((-b + math.sqrt(discriminante)) / (2*a)), 2)
+    x2 = round(((-b - math.sqrt(discriminante)) / (2*a)), 2)
+    resultado = f"x1 = {x1}, x2 = {x2}"
+else:
+    resultado = "No tiene soluciones reales"
+
+resultado
+        `;
+
+        let resultadoPython = await pyodide.runPythonAsync(codigoPython);
+
+        document.getElementById("resultado").innerHTML = `
+            Resultado:
+            <br><br>
+            ${resultadoPython}
+        `;
+
+        let xValores = generarX();
+
+        let yValores = xValores.map(x => a*x*x + b*x + c);
+
+        crearGrafica(xValores, yValores);
+    }
+
+    function crearGrafica(xValores, yValores){
+
+        const ctx = document.getElementById("grafica").getContext("2d");
+
+        if(chart){
+
+            chart.destroy();
+        }
+
+        chart = new Chart(ctx, {
+
+            type:"line",
+
+            data:{
+
+                labels:xValores,
+
+                datasets:[{
+
+                    label:"Parábola",
+
+                    data:yValores,
+
+                    borderWidth:3,
+
+                    fill:false
+
+                }]
+            },
+
+            options:{
+
+                responsive:true,
+
+                plugins:{
+
+                    title:{
+
+                        display:true,
+
+                        text:"Gráfica de la Ecuación"
+
+                    }
+                }
+            }
+        });
+    }
+
+    function limpiar(){
+
+        document.getElementById("a").value = "";
+
+        document.getElementById("b").value = "";
+
+        document.getElementById("c").value = "";
+
+        document.getElementById("resultado").innerHTML =
+        "Aquí aparecerá el resultado.";
+
+        if(chart){
+
+            chart.destroy();
+        }
+    }
+
+</script>
+
+</body>
+</html>
