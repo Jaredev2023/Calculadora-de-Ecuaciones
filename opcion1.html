@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Opción 1 - Primer Grado</title>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Python en navegador -->
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js"></script>
+
+    <style>
+
+        body{
+
+            margin:0;
+            padding:0;
+
+            font-family: Arial, sans-serif;
+
+            background: #20199e;
+
+            background: linear-gradient(
+                90deg,
+                rgba(32, 25, 158, 1) 18%,
+                rgba(9, 9, 121, 1) 38%,
+                rgba(6, 12, 13, 1) 89%
+            );
+
+            min-height:100vh;
+
+            display:flex;
+            justify-content:center;
+            align-items:center;
+
+            color:white;
+        }
+
+        .container{
+
+            width:90%;
+            max-width:950px;
+
+            background: rgba(255,255,255,0.08);
+
+            padding:30px;
+
+            border-radius:20px;
+
+            box-shadow:0px 0px 25px rgba(0,0,0,0.4);
+        }
+
+        .titulo{
+
+            background: rgba(255,255,255,0.1);
+
+            padding:20px;
+
+            border-radius:20px;
+
+            text-align:center;
+
+            margin-bottom:25px;
+        }
+
+        .text-gradient{
+
+            --_space: ;
+
+            background-image: linear-gradient(
+                45deg var(--_space),
+                #c11ceb,
+                #36c7d1 50%,
+                #25007a 100%
+            );
+
+            background-clip:text;
+
+            color:transparent;
+
+            -webkit-background-clip:text;
+            -webkit-text-fill-color:transparent;
+        }
+
+        h1{
+
+            margin:0;
+
+            font-size:45px;
+        }
+
+        .descripcion{
+
+            margin-top:20px;
+
+            background: rgba(255,255,255,0.08);
+
+            padding:20px;
+
+            border-radius:15px;
+
+            line-height:1.7;
+
+            font-size:18px;
+        }
+
+        .inputs{
+
+            margin-top:30px;
+
+            text-align:center;
+        }
+
+        input{
+
+            padding:12px;
+
+            margin:10px;
+
+            border:none;
+
+            border-radius:10px;
+
+            width:120px;
+
+            font-size:16px;
+        }
+
+        button{
+
+            background-image: linear-gradient(
+                to right,
+                #FF512F 0%,
+                #F09819 51%,
+                #FF512F 100%
+            );
+
+            margin:10px;
+
+            padding:15px 45px;
+
+            text-align:center;
+
+            text-transform:uppercase;
+
+            transition:0.5s;
+
+            background-size:200% auto;
+
+            color:white;
+
+            box-shadow:0 0 20px rgba(0,0,0,0.4);
+
+            border-radius:10px;
+
+            border:none;
+
+            cursor:pointer;
+
+            font-size:15px;
+        }
+
+        button:hover{
+
+            background-position:right center;
+
+            transform:scale(1.05);
+        }
+
+        .resultado{
+
+            margin-top:25px;
+
+            background: rgba(255,255,255,0.08);
+
+            padding:20px;
+
+            border-radius:15px;
+
+            font-size:20px;
+
+            text-align:center;
+        }
+
+        .grafica{
+
+            margin-top:30px;
+
+            text-align:center;
+
+            font-size:24px;
+
+            font-weight:bold;
+        }
+
+        canvas{
+
+            background:white;
+
+            margin-top:20px;
+
+            border-radius:15px;
+
+            padding:10px;
+        }
+
+        a{
+            text-decoration:none;
+        }
+
+        .volver{
+
+            text-align:center;
+
+            margin-top:30px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- TITULO -->
+
+    <div class="titulo">
+
+        <h1 class="text-gradient">
+            Ecuaciones de Primer Grado
+        </h1>
+
+    </div>
+
+    <!-- DESCRIPCION -->
+
+    <div class="descripcion">
+
+        Una ecuación de primer grado representa una línea recta.
+
+        <br><br>
+
+        La forma general es:
+
+        <br><br>
+
+        <b>y = mx + b</b>
+
+        <br><br>
+
+        Donde:
+
+        <br>
+
+        • <b>m</b> representa la pendiente.
+
+        <br>
+
+        • <b>b</b> representa el punto donde la recta corta el eje Y.
+
+    </div>
+
+    <!-- INPUTS -->
+
+    <div class="inputs">
+
+        <input type="number" id="m" placeholder="Valor de m">
+
+        <input type="number" id="b" placeholder="Valor de b">
+
+        <br>
+
+        <button onclick="resolver()">
+            Resolver
+        </button>
+
+        <button onclick="limpiar()">
+            Limpiar
+        </button>
+
+    </div>
+
+    <!-- RESULTADO -->
+
+    <div id="resultado" class="resultado">
+
+        Aquí aparecerá el resultado.
+
+    </div>
+
+    <!-- GRAFICA -->
+
+    <div class="grafica">
+
+        Gráfica
+
+    </div>
+
+    <canvas id="grafica"></canvas>
+
+    <!-- VOLVER -->
+
+    <div class="volver">
+
+        <a href="index.html">
+
+            <button>
+                Volver al Menú
+            </button>
+
+        </a>
+
+    </div>
+
+</div>
+
+<script>
+
+    let chart;
+
+    let pyodide;
+
+    async function iniciarPython(){
+
+        pyodide = await loadPyodide();
+
+    }
+
+    iniciarPython();
+
+    function generarX(){
+
+        let valores = [];
+
+        for(let i=-10; i<=10; i+=0.5){
+
+            valores.push(i);
+
+        }
+
+        return valores;
+    }
+
+    async function resolver(){
+
+        let m = parseFloat(document.getElementById("m").value);
+
+        let b = parseFloat(document.getElementById("b").value);
+
+        if(isNaN(m) || isNaN(b)){
+
+            alert("Ingresa valores válidos");
+
+            return;
+        }
+
+        /* ===== PYTHON ===== */
+
+        let codigoPython = `
+m = ${m}
+b = ${b}
+
+resultado = round((-b/m), 2)
+
+resultado
+        `;
+
+        let raiz = await pyodide.runPythonAsync(codigoPython);
+
+        document.getElementById("resultado").innerHTML = `
+            Resultado:
+            <br><br>
+            x = ${raiz}
+        `;
+
+        let xValores = generarX();
+
+        let yValores = xValores.map(x => m*x + b);
+
+        crearGrafica(xValores, yValores);
+    }
+
+    function crearGrafica(xValores, yValores){
+
+        const ctx = document.getElementById("grafica").getContext("2d");
+
+        if(chart){
+
+            chart.destroy();
+        }
+
+        chart = new Chart(ctx, {
+
+            type:"line",
+
+            data:{
+
+                labels:xValores,
+
+                datasets:[{
+
+                    label:"Recta",
+
+                    data:yValores,
+
+                    borderWidth:3,
+
+                    fill:false
+
+                }]
+            },
+
+            options:{
+
+                responsive:true,
+
+                plugins:{
+
+                    title:{
+
+                        display:true,
+
+                        text:"Gráfica de la Ecuación"
+
+                    }
+                }
+            }
+        });
+    }
+
+    function limpiar(){
+
+        document.getElementById("m").value = "";
+
+        document.getElementById("b").value = "";
+
+        document.getElementById("resultado").innerHTML =
+        "Aquí aparecerá el resultado.";
+
+        if(chart){
+
+            chart.destroy();
+        }
+    }
+
+</script>
+
+</body>
+</html>
