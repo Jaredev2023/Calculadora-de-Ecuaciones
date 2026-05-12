@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Opción 4 - Sistema 3x3</title>
+
+    <!-- Python en navegador -->
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js"></script>
+
+    <style>
+
+        body{
+
+            margin:0;
+            padding:0;
+
+            font-family: Arial, sans-serif;
+
+            background: #20199e;
+
+            background: linear-gradient(
+                90deg,
+                rgba(32, 25, 158, 1) 18%,
+                rgba(9, 9, 121, 1) 38%,
+                rgba(6, 12, 13, 1) 89%
+            );
+
+            min-height:100vh;
+
+            display:flex;
+            justify-content:center;
+            align-items:center;
+
+            color:white;
+        }
+
+        .container{
+
+            width:90%;
+            max-width:1100px;
+
+            background: rgba(255,255,255,0.08);
+
+            padding:30px;
+
+            border-radius:20px;
+
+            box-shadow:0px 0px 25px rgba(0,0,0,0.4);
+        }
+
+        .titulo{
+
+            background: rgba(255,255,255,0.1);
+
+            padding:20px;
+
+            border-radius:20px;
+
+            text-align:center;
+
+            margin-bottom:25px;
+        }
+
+        .text-gradient{
+
+            --_space: ;
+
+            background-image: linear-gradient(
+                45deg var(--_space),
+                #c11ceb,
+                #36c7d1 50%,
+                #25007a 100%
+            );
+
+            background-clip:text;
+
+            color:transparent;
+
+            -webkit-background-clip:text;
+            -webkit-text-fill-color:transparent;
+        }
+
+        h1{
+
+            margin:0;
+
+            font-size:45px;
+        }
+
+        .descripcion{
+
+            margin-top:20px;
+
+            background: rgba(255,255,255,0.08);
+
+            padding:20px;
+
+            border-radius:15px;
+
+            line-height:1.7;
+
+            font-size:18px;
+        }
+
+        .inputs{
+
+            margin-top:30px;
+
+            text-align:center;
+        }
+
+        input{
+
+            padding:12px;
+
+            margin:8px;
+
+            border:none;
+
+            border-radius:10px;
+
+            width:90px;
+
+            font-size:16px;
+        }
+
+        .fila{
+
+            margin-top:20px;
+        }
+
+        button{
+
+            background-image: linear-gradient(
+                to right,
+                #FF512F 0%,
+                #F09819 51%,
+                #FF512F 100%
+            );
+
+            margin:10px;
+
+            padding:15px 45px;
+
+            text-align:center;
+
+            text-transform:uppercase;
+
+            transition:0.5s;
+
+            background-size:200% auto;
+
+            color:white;
+
+            box-shadow:0 0 20px rgba(0,0,0,0.4);
+
+            border-radius:10px;
+
+            border:none;
+
+            cursor:pointer;
+
+            font-size:15px;
+        }
+
+        button:hover{
+
+            background-position:right center;
+
+            transform:scale(1.05);
+        }
+
+        .resultado{
+
+            margin-top:25px;
+
+            background: rgba(255,255,255,0.08);
+
+            padding:20px;
+
+            border-radius:15px;
+
+            font-size:20px;
+
+            text-align:center;
+        }
+
+        .volver{
+
+            text-align:center;
+
+            margin-top:30px;
+        }
+
+        a{
+            text-decoration:none;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- TITULO -->
+
+    <div class="titulo">
+
+        <h1 class="text-gradient">
+            Sistema de Ecuaciones 3x3
+        </h1>
+
+    </div>
+
+    <!-- DESCRIPCION -->
+
+    <div class="descripcion">
+
+        Un sistema de ecuaciones 3x3 permite encontrar el valor de
+        tres incógnitas utilizando tres ecuaciones lineales.
+
+        <br><br>
+
+        Forma general:
+
+        <br><br>
+
+        <b>a₁x + b₁y + c₁z = d₁</b>
+
+        <br>
+
+        <b>a₂x + b₂y + c₂z = d₂</b>
+
+        <br>
+
+        <b>a₃x + b₃y + c₃z = d₃</b>
+
+    </div>
+
+    <!-- INPUTS -->
+
+    <div class="inputs">
+
+        <!-- FILA 1 -->
+
+        <div class="fila">
+
+            <input type="number" id="a1" placeholder="a1">
+
+            <input type="number" id="b1" placeholder="b1">
+
+            <input type="number" id="c1" placeholder="c1">
+
+            <input type="number" id="d1" placeholder="d1">
+
+        </div>
+
+        <!-- FILA 2 -->
+
+        <div class="fila">
+
+            <input type="number" id="a2" placeholder="a2">
+
+            <input type="number" id="b2" placeholder="b2">
+
+            <input type="number" id="c2" placeholder="c2">
+
+            <input type="number" id="d2" placeholder="d2">
+
+        </div>
+
+        <!-- FILA 3 -->
+
+        <div class="fila">
+
+            <input type="number" id="a3" placeholder="a3">
+
+            <input type="number" id="b3" placeholder="b3">
+
+            <input type="number" id="c3" placeholder="c3">
+
+            <input type="number" id="d3" placeholder="d3">
+
+        </div>
+
+        <br>
+
+        <button onclick="resolver()">
+            Resolver
+        </button>
+
+        <button onclick="limpiar()">
+            Limpiar
+        </button>
+
+    </div>
+
+    <!-- RESULTADO -->
+
+    <div id="resultado" class="resultado">
+
+        Aquí aparecerá el resultado.
+
+    </div>
+
+    <!-- VOLVER -->
+
+    <div class="volver">
+
+        <a href="index.html">
+
+            <button>
+                Volver al Menú
+            </button>
+
+        </a>
+
+    </div>
+
+</div>
+
+<script>
+
+    let pyodide;
+
+    async function iniciarPython(){
+
+        pyodide = await loadPyodide();
+
+    }
+
+    iniciarPython();
+
+    async function resolver(){
+
+        let a1 = parseFloat(document.getElementById("a1").value);
+        let b1 = parseFloat(document.getElementById("b1").value);
+        let c1 = parseFloat(document.getElementById("c1").value);
+        let d1 = parseFloat(document.getElementById("d1").value);
+
+        let a2 = parseFloat(document.getElementById("a2").value);
+        let b2 = parseFloat(document.getElementById("b2").value);
+        let c2 = parseFloat(document.getElementById("c2").value);
+        let d2 = parseFloat(document.getElementById("d2").value);
+
+        let a3 = parseFloat(document.getElementById("a3").value);
+        let b3 = parseFloat(document.getElementById("b3").value);
+        let c3 = parseFloat(document.getElementById("c3").value);
+        let d3 = parseFloat(document.getElementById("d3").value);
+
+        if(
+            isNaN(a1) || isNaN(b1) || isNaN(c1) || isNaN(d1) ||
+            isNaN(a2) || isNaN(b2) || isNaN(c2) || isNaN(d2) ||
+            isNaN(a3) || isNaN(b3) || isNaN(c3) || isNaN(d3)
+        ){
+
+            alert("Ingresa valores válidos");
+
+            return;
+        }
+
+        /* ===== PYTHON ===== */
+
+        let codigoPython = `
+import numpy as np
+
+A = np.array([
+    [${a1}, ${b1}, ${c1}],
+    [${a2}, ${b2}, ${c2}],
+    [${a3}, ${b3}, ${c3}]
+])
+
+B = np.array([
+    ${d1},
+    ${d2},
+    ${d3}
+])
+
+try:
+
+    solucion = np.linalg.solve(A, B)
+
+    x = round(solucion[0], 2)
+    y = round(solucion[1], 2)
+    z = round(solucion[2], 2)
+
+    resultado = f"x = {x}, y = {y}, z = {z}"
+
+except:
+
+    resultado = "El sistema no tiene solución única"
+
+resultado
+        `;
+
+        let resultadoPython = await pyodide.runPythonAsync(codigoPython);
+
+        document.getElementById("resultado").innerHTML = `
+            Resultado:
+            <br><br>
+            ${resultadoPython}
+        `;
+    }
+
+    function limpiar(){
+
+        let inputs = document.querySelectorAll("input");
+
+        inputs.forEach(input => {
+
+            input.value = "";
+
+        });
+
+        document.getElementById("resultado").innerHTML =
+        "Aquí aparecerá el resultado.";
+    }
+
+</script>
+
+</body>
+</html>
