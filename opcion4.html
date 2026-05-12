@@ -7,12 +7,6 @@
 
 <title>Opción 4 - Sistema 3x3</title>
 
-<!-- CHART -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<!-- PYTHON -->
-<script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js"></script>
-
 <style>
 
 body{
@@ -79,7 +73,9 @@ h1{
 
     margin-top:20px;
 
-    line-height:1.7;
+    line-height:1.8;
+
+    font-size:18px;
 }
 
 .inputs{
@@ -87,6 +83,11 @@ h1{
     text-align:center;
 
     margin-top:30px;
+}
+
+.fila{
+
+    margin-top:15px;
 }
 
 input{
@@ -151,29 +152,9 @@ button:hover{
 
     text-align:center;
 
-    font-size:20px;
-}
+    font-size:22px;
 
-.grafica-titulo{
-
-    text-align:center;
-
-    margin-top:30px;
-
-    font-size:24px;
-
-    font-weight:bold;
-}
-
-canvas{
-
-    background:white;
-
-    margin-top:20px;
-
-    border-radius:15px;
-
-    padding:10px;
+    line-height:1.8;
 }
 
 .volver{
@@ -201,8 +182,20 @@ a{
 
     <div class="descripcion">
 
-        Esta calculadora permite resolver sistemas de ecuaciones
-        lineales de 3x3 utilizando Python.
+        Un sistema de ecuaciones 3x3 está formado por
+        tres ecuaciones lineales con tres incógnitas.
+
+        <br><br>
+
+        Su objetivo es encontrar los valores de:
+
+        <br><br>
+
+        <b>x</b>, <b>y</b> y <b>z</b>
+
+        <br><br>
+
+        que satisfacen simultáneamente las tres ecuaciones.
 
         <br><br>
 
@@ -228,33 +221,42 @@ a{
 
         <!-- ECUACION 1 -->
 
-        <div>
+        <div class="fila">
 
             <input type="number" id="a1" placeholder="a1">
+
             <input type="number" id="b1" placeholder="b1">
+
             <input type="number" id="c1" placeholder="c1">
+
             <input type="number" id="d1" placeholder="d1">
 
         </div>
 
         <!-- ECUACION 2 -->
 
-        <div>
+        <div class="fila">
 
             <input type="number" id="a2" placeholder="a2">
+
             <input type="number" id="b2" placeholder="b2">
+
             <input type="number" id="c2" placeholder="c2">
+
             <input type="number" id="d2" placeholder="d2">
 
         </div>
 
         <!-- ECUACION 3 -->
 
-        <div>
+        <div class="fila">
 
             <input type="number" id="a3" placeholder="a3">
+
             <input type="number" id="b3" placeholder="b3">
+
             <input type="number" id="c3" placeholder="c3">
+
             <input type="number" id="d3" placeholder="d3">
 
         </div>
@@ -279,18 +281,6 @@ a{
 
     </div>
 
-    <!-- TITULO GRAFICA -->
-
-    <div class="grafica-titulo">
-
-        Gráfica
-
-    </div>
-
-    <!-- GRAFICA -->
-
-    <canvas id="grafica"></canvas>
-
     <!-- VOLVER -->
 
     <div class="volver">
@@ -309,161 +299,95 @@ a{
 
 <script>
 
-let pyodide;
-let chart;
-
-/* ===== INICIAR PYTHON ===== */
-
-async function iniciarPython(){
-
-    pyodide = await loadPyodide();
-
-    await pyodide.loadPackage("numpy");
-}
-
-window.onload = async () => {
-
-    await iniciarPython();
-
-};
-
 /* ===== RESOLVER ===== */
 
-async function resolver(){
+function resolver(){
 
-    let valores = [];
+    let a1 = parseFloat(document.getElementById("a1").value);
+    let b1 = parseFloat(document.getElementById("b1").value);
+    let c1 = parseFloat(document.getElementById("c1").value);
+    let d1 = parseFloat(document.getElementById("d1").value);
 
-    document.querySelectorAll("input").forEach(input => {
+    let a2 = parseFloat(document.getElementById("a2").value);
+    let b2 = parseFloat(document.getElementById("b2").value);
+    let c2 = parseFloat(document.getElementById("c2").value);
+    let d2 = parseFloat(document.getElementById("d2").value);
 
-        valores.push(parseFloat(input.value));
+    let a3 = parseFloat(document.getElementById("a3").value);
+    let b3 = parseFloat(document.getElementById("b3").value);
+    let c3 = parseFloat(document.getElementById("c3").value);
+    let d3 = parseFloat(document.getElementById("d3").value);
 
-    });
-
-    if(valores.includes(NaN)){
+    if(
+        isNaN(a1) || isNaN(b1) || isNaN(c1) || isNaN(d1) ||
+        isNaN(a2) || isNaN(b2) || isNaN(c2) || isNaN(d2) ||
+        isNaN(a3) || isNaN(b3) || isNaN(c3) || isNaN(d3)
+    ){
 
         alert("Completa todos los campos");
 
         return;
     }
 
-    let [
-        a1,b1,c1,d1,
-        a2,b2,c2,d2,
-        a3,b3,c3,d3
-    ] = valores;
+    /* ===== DETERMINANTE ===== */
 
-    let codigo = `
-import numpy as np
+    let D =
+    a1*(b2*c3 - b3*c2)
+    - b1*(a2*c3 - a3*c2)
+    + c1*(a2*b3 - a3*b2);
 
-A = np.array([
-[${a1},${b1},${c1}],
-[${a2},${b2},${c2}],
-[${a3},${b3},${c3}]
-])
-
-B = np.array([
-${d1},
-${d2},
-${d3}
-])
-
-sol = np.linalg.solve(A,B)
-
-x = round(sol[0],2)
-y = round(sol[1],2)
-z = round(sol[2],2)
-
-f"{x},{y},{z}"
-`;
-
-    try{
-
-        let resultadoPython =
-        await pyodide.runPythonAsync(codigo);
-
-        let datos = resultadoPython.split(",");
-
-        let x = parseFloat(datos[0]);
-        let y = parseFloat(datos[1]);
-        let z = parseFloat(datos[2]);
-
-        document.getElementById("resultado").innerHTML = `
-            Resultado:
-            <br><br>
-            x = ${x}
-            <br>
-            y = ${y}
-            <br>
-            z = ${z}
-        `;
-
-        crearGrafica(x,y,z);
-
-    }catch(error){
+    if(D == 0){
 
         document.getElementById("resultado").innerHTML =
-        "El sistema no tiene solución única";
-    }
-}
+        "El sistema no tiene solución única.";
 
-/* ===== GRAFICA ===== */
-
-function crearGrafica(x,y,z){
-
-    const ctx =
-    document.getElementById("grafica")
-    .getContext("2d");
-
-    if(chart){
-
-        chart.destroy();
+        return;
     }
 
-    chart = new Chart(ctx, {
+    /* ===== Dx ===== */
 
-        type:'line',
+    let Dx =
+    d1*(b2*c3 - b3*c2)
+    - b1*(d2*c3 - d3*c2)
+    + c1*(d2*b3 - d3*b2);
 
-        data:{
+    /* ===== Dy ===== */
 
-            labels:['X','Y','Z'],
+    let Dy =
+    a1*(d2*c3 - d3*c2)
+    - d1*(a2*c3 - a3*c2)
+    + c1*(a2*d3 - a3*d2);
 
-            datasets:[{
+    /* ===== Dz ===== */
 
-                label:'Resultados',
+    let Dz =
+    a1*(b2*d3 - b3*d2)
+    - b1*(a2*d3 - a3*d2)
+    + d1*(a2*b3 - a3*b2);
 
-                data:[x,y,z],
+    let x = (Dx / D).toFixed(2);
 
-                borderWidth:3,
+    let y = (Dy / D).toFixed(2);
 
-                fill:false,
+    let z = (Dz / D).toFixed(2);
 
-                tension:0
-            }]
-        },
+    document.getElementById("resultado").innerHTML = `
 
-        options:{
+        Resultado:
 
-            responsive:true,
+        <br><br>
 
-            plugins:{
+        x = ${x}
 
-                title:{
+        <br>
 
-                    display:true,
+        y = ${y}
 
-                    text:'Gráfica de Resultados'
-                }
-            },
+        <br>
 
-            scales:{
+        z = ${z}
 
-                y:{
-
-                    beginAtZero:true
-                }
-            }
-        }
-    });
+    `;
 }
 
 /* ===== LIMPIAR ===== */
@@ -478,11 +402,6 @@ function limpiar(){
 
     document.getElementById("resultado").innerHTML =
     "Aquí aparecerá el resultado";
-
-    if(chart){
-
-        chart.destroy();
-    }
 }
 
 </script>
