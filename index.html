@@ -4,363 +4,202 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculadora de Ecuaciones</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
-        body {
+        body{
+            margin:0;
+            padding:0;
             font-family: Arial, sans-serif;
+            min-height:100vh;
+
             background: #20199e;
-            background:  linear-gradient(90deg,rgba(32, 25, 158, 1) 0%, rgba(6, 12, 13, 1) 33%, rgba(29, 34, 36, 1) 92%);
-            color: white;
-            margin: 0;
-            padding: 0;
+            background: linear-gradient(
+                90deg,
+                rgba(32, 25, 158, 1) 18%,
+                rgba(9, 9, 121, 1) 38%,
+                rgba(6, 12, 13, 1) 89%
+            );
+
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            color:white;
         }
 
-        .container {
-            width: 90%;
-            max-width: 900px;
-            margin: 30px auto;
+        .container{
+            width:90%;
+            max-width:800px;
+            padding:40px;
+            border-radius:20px;
+
             background: rgba(255,255,255,0.08);
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0px 4px 15px rgba(0,0,0,0.4);
+
+            backdrop-filter: blur(8px);
+
+            box-shadow:0px 0px 25px rgba(0,0,0,0.4);
+
+            text-align:center;
         }
 
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
+        .titulo-box{
+            background: rgba(255,255,255,0.12);
+            padding:25px;
+            border-radius:20px;
+            margin-bottom:30px;
+            box-shadow:0px 0px 20px rgba(0,0,0,0.4);
         }
 
-        .text-gradient {
+        /* ===== GRADIENTE DE TEXTO ===== */
+
+        .text-gradient{
+
             --_space: ;
+
             background-image: linear-gradient(
                 45deg var(--_space),
                 #c11ceb,
                 #36c7d1 50%,
                 #25007a 100%
             );
-            background-clip: text;
-            color: transparent;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+
+            background-clip:text;
+            color:transparent;
+
+            -webkit-background-clip:text;
+            -webkit-text-fill-color:transparent;
         }
 
         @supports (background-image: linear-gradient(in oklch, #000, #fff)) {
-            .text-gradient {
+            .text-gradient{
                 --_space: in oklch;
             }
         }
 
-        .menu {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
+        h1{
+            font-size:50px;
+            margin:0;
         }
 
-        button {
-            background-image: linear-gradient(to right, #FF512F 0%, #F09819 51%, #FF512F 100%);
-            margin: 10px;
-            padding: 15px 45px;
-            text-align: center;
-            text-transform: uppercase;
-            transition: 0.5s;
-            background-size: 200% auto;
-            color: white;
-            box-shadow: 0 0 20px rgba(0,0,0,0.4);
-            border-radius: 10px;
-            display: inline-block;
-            outline: none;
-            border: none;
-            cursor: pointer;
-            font-size: 15px;
+        .descripcion{
+            margin-top:20px;
+            font-size:18px;
+
+            background: rgba(255,255,255,0.08);
+            padding:15px;
+            border-radius:15px;
         }
 
-        button:hover {
-            background-position: right center;
-            color: #fff;
-            text-decoration: none;
-            transform: scale(1.05);
+        .menu{
+            margin-top:35px;
+
+            display:flex;
+            flex-wrap:wrap;
+            justify-content:center;
+            gap:20px;
         }
 
-        .section {
-            display: none;
-            margin-top: 20px;
+        /* ===== BOTONES ===== */
+
+        button{
+            background-image: linear-gradient(
+                to right,
+                #FF512F 0%,
+                #F09819 51%,
+                #FF512F 100%
+            );
+
+            padding:15px 45px;
+
+            text-align:center;
+            text-transform:uppercase;
+
+            transition:0.5s;
+
+            background-size:200% auto;
+
+            color:white;
+
+            box-shadow:0 0 20px rgba(0,0,0,0.4);
+
+            border-radius:10px;
+
+            border:none;
+
+            cursor:pointer;
+
+            font-size:16px;
         }
 
-        input {
-            padding: 8px;
-            margin: 5px;
-            border-radius: 8px;
-            border: none;
-            width: 80px;
+        button:hover{
+            background-position:right center;
+            transform:scale(1.05);
         }
 
-        .resultado {
-            margin-top: 15px;
-            background: rgba(255,255,255,0.1);
-            padding: 10px;
-            border-radius: 10px;
+        a{
+            text-decoration:none;
         }
 
-        canvas {
-            background: white;
-            border-radius: 10px;
-            margin-top: 20px;
-        }
-
-        .grafica-titulo {
-            text-align: center;
-            font-size: 22px;
-            font-weight: bold;
-            margin-top: 20px;
-            color: white;
-        }
     </style>
 </head>
+
 <body>
 
-<div class="container">
-    <h1 class="text-gradient">Calculadora de Ecuaciones</h1>
-    <p class="text-gradient" style="text-align:center; font-size:18px; font-weight:bold;">
-        Aplicación diseñada para resolver ecuaciones de primer grado, segundo grado y sistemas de ecuaciones 2x2.
-    </p>
-    
+    <div class="container">
 
-    <div class="menu">
-        <button onclick="mostrar('primer')">Primer Grado</button>
-        <button onclick="mostrar('segundo')">Segundo Grado</button>
-        <button onclick="mostrar('sistema')">Sistema 2x2</button>
-    </div>
+        <!-- ===== TITULO ===== -->
 
-    <!-- Primer grado -->
-    <div id="primer" class="section">
-        <h2 class="text-gradient">Ecuación de Primer Grado</h2>
-        <p>y = mx + b</p>
-        <div class="resultado">
-            Una ecuación de primer grado representa una línea recta. La variable <b>m</b> indica la pendiente y <b>b</b> el punto donde la recta cruza el eje y.
+        <div class="titulo-box">
+
+            <h1 class="text-gradient">
+                Calculadora de Ecuaciones
+            </h1>
+
         </div>
-        <input type="number" id="m" placeholder="m">
-        <input type="number" id="b" placeholder="b">
-        <button onclick="resolverPrimer()">Resolver</button>
-        <button onclick="limpiarPrimer()">Borrar</button>
-        <div id="resPrimer" class="resultado"></div>
-    </div>
 
-    <!-- Segundo grado -->
-    <div id="segundo" class="section">
-        <h2 class="text-gradient">Ecuación de Segundo Grado</h2>
-        <p>ax² + bx + c = 0</p>
-        <div class="resultado">
-            Una ecuación de segundo grado forma una parábola. Se utiliza para encontrar puntos máximos, mínimos y las raíces de la ecuación.
+        <!-- ===== DESCRIPCION ===== -->
+
+        <div class="descripcion">
+
+            Selecciona una opción del menú para acceder a las diferentes
+            operaciones matemáticas disponibles.
+
         </div>
-        <input type="number" id="a2" placeholder="a">
-        <input type="number" id="b2" placeholder="b">
-        <input type="number" id="c2" placeholder="c">
-        <button onclick="resolverSegundo()">Resolver</button>
-        <button onclick="limpiarSegundo()">Borrar</button>
-        <div id="resSegundo" class="resultado"></div>
-    </div>
 
-    <!-- Sistema 2x2 -->
-    <div id="sistema" class="section">
-        <h2 class="text-gradient">Sistema 2x2</h2>
-        <p>a1x + b1y = c1</p>
-        <div class="resultado">
-            Un sistema 2x2 permite encontrar el valor de dos incógnitas utilizando dos ecuaciones lineales al mismo tiempo.
+        <!-- ===== MENU ===== -->
+
+        <div class="menu">
+
+            <!-- ===== OPCION 1 ===== -->
+            <!-- CAMBIA opcion1.html POR TU PAGINA -->
+
+            <a href="opcion1.html">
+                <button>Ecuacion de  Primer Grado</button>
+            </a>
+
+            <!-- ===== OPCION 2 ===== -->
+            <!-- CAMBIA opcion2.html POR TU PAGINA -->
+
+            <a href="opcion2.html">
+                <button>Ecuacion de Segundo Grado</button>
+            </a>
+
+            <!-- ===== OPCION 3 ===== -->
+            <!-- CAMBIA opcion3.html POR TU PAGINA -->
+
+            <a href="opcion3.html">
+                <button>Sistemas de Ecuacion 2X2</button>
+            </a>
+
+            <!-- ===== OPCION 4 ===== -->
+            <!-- CAMBIA opcion4.html POR TU PAGINA -->
+
+            <a href="opcion4.html">
+                <button>Sistema de Ecuacion 3X3</button>
+            </a>
+
         </div>
-        <input type="number" id="a1" placeholder="a1">
-        <input type="number" id="b1" placeholder="b1">
-        <input type="number" id="c1" placeholder="c1">
 
-        <p>a2x + b2y = c2</p>
-        <input type="number" id="a22" placeholder="a2">
-        <input type="number" id="b22" placeholder="b2">
-        <input type="number" id="c22" placeholder="c2">
-
-        <button onclick="resolverSistema()">Resolver</button>
-        <button onclick="limpiarSistema()">Borrar</button>
-        <div id="resSistema" class="resultado"></div>
     </div>
-
-    <div class="grafica-titulo">Gráfica</div>
-    <canvas id="grafica"></canvas>
-</div>
-
-<script>
-    let chart;
-
-    function mostrar(id) {
-        document.querySelectorAll('.section').forEach(sec => sec.style.display = 'none');
-        document.getElementById(id).style.display = 'block';
-    }
-
-    function crearGrafica(labels, datasets, titulo) {
-        const ctx = document.getElementById('grafica').getContext('2d');
-
-        if(chart) chart.destroy();
-
-        chart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: datasets
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    title: {
-                        display: true,
-                        text: titulo
-                    }
-                },
-                scales: {
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'x'
-                        }
-                    },
-                    y: {
-                        title: {
-                            display: true,
-                            text: 'y'
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-    function generarX() {
-        let vals = [];
-        for(let i = -10; i <= 10; i += 0.5) {
-            vals.push(i);
-        }
-        return vals;
-    }
-
-    function resolverPrimer() {
-        let m = parseFloat(document.getElementById('m').value);
-        let b = parseFloat(document.getElementById('b').value);
-
-        let raiz = (-b / m).toFixed(2);
-        document.getElementById('resPrimer').innerHTML = `Resultado: x = ${raiz}`;
-
-        let xVals = generarX();
-        let yVals = xVals.map(x => m*x + b);
-
-        crearGrafica(xVals, [{
-            label: 'Recta',
-            data: yVals,
-            borderWidth: 2,
-            fill: false
-        }], 'Ecuación de Primer Grado');
-    }
-
-    function resolverSegundo() {
-        let a = parseFloat(document.getElementById('a2').value);
-        let b = parseFloat(document.getElementById('b2').value);
-        let c = parseFloat(document.getElementById('c2').value);
-
-        let discriminante = b*b - 4*a*c;
-        let resultado = '';
-
-        if(discriminante >= 0) {
-            let x1 = ((-b + Math.sqrt(discriminante)) / (2*a)).toFixed(2);
-            let x2 = ((-b - Math.sqrt(discriminante)) / (2*a)).toFixed(2);
-            resultado = `Soluciones: x1 = ${x1}, x2 = ${x2}`;
-        } else {
-            resultado = 'No tiene soluciones reales';
-        }
-
-        document.getElementById('resSegundo').innerHTML = resultado;
-
-        let xVals = generarX();
-        let yVals = xVals.map(x => a*x*x + b*x + c);
-
-        crearGrafica(xVals, [{
-            label: 'Parábola',
-            data: yVals,
-            borderWidth: 2,
-            fill: false
-        }], 'Ecuación de Segundo Grado');
-    }
-
-    function resolverSistema() {
-        let a1 = parseFloat(document.getElementById('a1').value);
-        let b1 = parseFloat(document.getElementById('b1').value);
-        let c1 = parseFloat(document.getElementById('c1').value);
-
-        let a2 = parseFloat(document.getElementById('a22').value);
-        let b2 = parseFloat(document.getElementById('b22').value);
-        let c2 = parseFloat(document.getElementById('c22').value);
-
-        let det = a1*b2 - a2*b1;
-
-        if(det === 0) {
-            document.getElementById('resSistema').innerHTML = 'No hay solución única';
-            return;
-        }
-
-        let x = ((c1*b2) - (c2*b1)) / det;
-        let y = ((a1*c2) - (a2*c1)) / det;
-
-        document.getElementById('resSistema').innerHTML = `Resultado: x = ${x.toFixed(2)}, y = ${y.toFixed(2)}`;
-
-        let xVals = generarX();
-        let yVals1 = xVals.map(xv => (c1 - a1*xv)/b1);
-        let yVals2 = xVals.map(xv => (c2 - a2*xv)/b2);
-
-        crearGrafica(xVals, [
-            {
-                label: 'Recta 1',
-                data: yVals1,
-                borderWidth: 2,
-                fill: false
-            },
-            {
-                label: 'Recta 2',
-                data: yVals2,
-                borderWidth: 2,
-                fill: false
-            }
-        ], 'Sistema 2x2');
-    }
-function limpiarGrafica() {
-        if(chart) {
-            chart.destroy();
-        }
-    }
-
-    function limpiarPrimer() {
-        document.getElementById('m').value = '';
-        document.getElementById('b').value = '';
-        document.getElementById('resPrimer').innerHTML = '';
-        limpiarGrafica();
-    }
-
-    function limpiarSegundo() {
-        document.getElementById('a2').value = '';
-        document.getElementById('b2').value = '';
-        document.getElementById('c2').value = '';
-        document.getElementById('resSegundo').innerHTML = '';
-        limpiarGrafica();
-    }
-
-    function limpiarSistema() {
-        document.getElementById('a1').value = '';
-        document.getElementById('b1').value = '';
-        document.getElementById('c1').value = '';
-        document.getElementById('a22').value = '';
-        document.getElementById('b22').value = '';
-        document.getElementById('c22').value = '';
-        document.getElementById('resSistema').innerHTML = '';
-        limpiarGrafica();
-    }
-</script>
-
-
 
 </body>
 </html>
